@@ -6,6 +6,7 @@ mod utils;
 
 use pyo3::prelude::*;
 
+/// Generic Qiniu Resource Storage SDK
 #[pymodule]
 #[pyo3(name = "qiniu_sdk_bindings")]
 fn qiniu_sdk_bindings(py: Python<'_>, m: &PyModule) -> PyResult<()> {

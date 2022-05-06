@@ -25,3 +25,9 @@ pyo3-log = "0.6.0"
 pyo3-asyncio = { version = "0.16.0", features = ["async-std-runtime"] }
 qiniu-sdk = { version = "0.1.1", path = "rust-sdk/sdk", features = ["etag", "credential", "upload-token", "async"] }
 futures = "0.3.21"
+
+[target.x86_64-apple-darwin]
+rustflags = [
+    "-C", "link-arg=-undefined",
+    "-C", "link-arg=dynamic_lookup",
+]

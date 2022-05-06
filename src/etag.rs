@@ -4,6 +4,7 @@ use qiniu_sdk::etag::{FixedOutput, GenericArray, Reset, Update, ETAG_SIZE};
 
 pub(super) fn create_module(py: Python<'_>) -> PyResult<&PyModule> {
     let m = PyModule::new(py, "etag")?;
+    m.setattr("__doc__", "a etag module")?;
     m.add("ETAG_SIZE", ETAG_SIZE)?;
     m.add_class::<EtagV1>()?;
     m.add_class::<EtagV2>()?;
@@ -18,6 +19,7 @@ pub(super) fn create_module(py: Python<'_>) -> PyResult<&PyModule> {
 
 macro_rules! define_etag_struct {
     ($name:ident, $rust_struct:ty) => {
+        /// Etag class
         #[pyclass]
         struct $name($rust_struct);
 
@@ -55,6 +57,7 @@ macro_rules! define_etag_struct {
 
 define_etag_struct!(EtagV1, qiniu_sdk::etag::EtagV1);
 
+/// 构建 Etag V1 计算器
 #[pymethods]
 impl EtagV1 {
     #[new]
@@ -65,6 +68,7 @@ impl EtagV1 {
 
 define_etag_struct!(EtagV2, qiniu_sdk::etag::EtagV2);
 
+/// 构建 Etag V2 计算器
 #[pymethods]
 impl EtagV2 {
     #[new]
@@ -75,6 +79,7 @@ impl EtagV2 {
 
 define_etag_struct!(Etag, qiniu_sdk::etag::Etag);
 
+/// 创建指定版本的 Etag 兼容计算器
 #[pymethods]
 impl Etag {
     #[new]
@@ -83,6 +88,7 @@ impl Etag {
     }
 }
 
+/// 选择 Etag 版本
 #[pyclass]
 #[derive(Debug, Copy, Clone)]
 enum EtagVersion {
@@ -99,6 +105,7 @@ impl From<EtagVersion> for qiniu_sdk::etag::EtagVersion {
     }
 }
 
+/// 读取 reader 中的数据并计算它的 Etag V1，生成结果
 #[pyfunction]
 #[pyo3(text_signature = "(io_base)")]
 fn etag_of(io_base: PyObject) -> PyResult<String> {
@@ -106,6 +113,7 @@ fn etag_of(io_base: PyObject) -> PyResult<String> {
     Ok(etag)
 }
 
+/// 根据给出的数据块尺寸，读取 reader 中的数据并计算它的 Etag V2，生成结果
 #[pyfunction]
 #[pyo3(text_signature = "(io_base, parts)")]
 fn etag_with_parts(io_base: PyObject, parts: Vec<usize>) -> PyResult<String> {
@@ -113,6 +121,7 @@ fn etag_with_parts(io_base: PyObject, parts: Vec<usize>) -> PyResult<String> {
     Ok(etag)
 }
 
+/// 异步读取 reader 中的数据并计算它的 Etag V1，生成结果
 #[pyfunction]
 #[pyo3(text_signature = "(io_base)")]
 fn async_etag_of(io_base: PyObject, py: Python<'_>) -> PyResult<&PyAny> {
@@ -123,6 +132,7 @@ fn async_etag_of(io_base: PyObject, py: Python<'_>) -> PyResult<&PyAny> {
     })
 }
 
+/// 根据给出的数据块尺寸，异步读取 reader 中的数据并计算它的 Etag V2，生成结果
 #[pyfunction]
 #[pyo3(text_signature = "(io_base, parts)")]
 fn async_etag_with_parts(io_base: PyObject, parts: Vec<usize>, py: Python<'_>) -> PyResult<&PyAny> {
